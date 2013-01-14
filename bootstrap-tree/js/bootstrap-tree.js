@@ -43,12 +43,12 @@
 
   Tree.prototype = {
 
-    constructor: Tree
+    constructor: Tree,
 
-    , toggle: function () {
-      var a, n, s
-        , currentStatus = this.$element.hasClass("in")
-        , eventName = (!currentStatus) ? "openbranch" : "closebranch";
+    toggle: function () {
+      var a, n, s,
+          currentStatus = this.$element.hasClass("in"),
+          eventName = (!currentStatus) ? "openbranch" : "closebranch";
 
       this.$parent[currentStatus ? "addClass" : "removeClass"]("closed");
       this.$element[currentStatus ? "removeClass" : "addClass"]("in");
@@ -64,21 +64,21 @@
       });
 
       this.$parent.trigger(a).trigger(s);
-    }
-    , _buildOutput: function (doc, type, parent) {
+    },
+    _buildOutput: function (doc, type, parent) {
       var nodes = this._buildNodes(doc, type);
       parent.empty().append(this._createNodes(nodes));
-    }
-    , _createNodes: function (nodes) {
+    },
+    _createNodes: function (nodes) {
 
-      var els = []
-        , $this = $(this);
+      var els = [],
+          $this = $(this);
 
       $.each(nodes, function (ind, el) {
-        var node = $("<li>")
-          , role = (el.leaf) ? "leaf" : "branch"
-          , attributes = {}
-          , anchor = $("<a>");
+        var node = $("<li>"),
+          role = (el.leaf) ? "leaf" : "branch",
+          attributes = {},
+          anchor = $("<a>");
 
         attributes.role = role;
 
@@ -123,8 +123,8 @@
       });
 
       return els;
-    }
-    , _buildNodes: function (doc, type) {
+    },
+    _buildNodes: function (doc, type) {
       var nodes = []
         , $el = this.$element;
 
@@ -134,14 +134,14 @@
         nodes = this._parseXmlNodes($(doc).find("nodes").children());
       }
       return nodes;
-    }
-    , _parseJsonNodes: function (doc) {
-      var nodes = []
-        , $this = $(this);
+    },
+    _parseJsonNodes: function (doc) {
+      var nodes = [],
+          $this = $(this);
 
       $.each(doc, function (ind, el) {
-        var opts = {}
-          , boolChkArr = ["leaf","expanded","checkable","checked"];
+        var opts = {},
+            boolChkArr = ["leaf","expanded","checkable","checked"];
 
         for (var item in el) {
           var nodeVal = (item !== "children") ? el[item] : $this[0]._parseJsonNodes(el.children);
@@ -153,22 +153,22 @@
       });
 
       return nodes;
-    }
-    , _parseXmlNodes: function (doc) {
-      var nodes = []
-        , $this = $(this)
-        , boolChkArr = ["leaf","expanded","checkable","checked"];
+    },
+    _parseXmlNodes: function (doc) {
+      var nodes = [],
+        $this = $(this),
+        boolChkArr = ["leaf","expanded","checkable","checked"];
 
       $.each(doc, function (ind, el) {
 
-        var opts = {}
-          , $el = $(el);
+        var opts = {},
+            $el = $(el);
 
         $.each($el.children(), function (x, i) {
 
-          var $i = $(i)
-            , tagName = $i[0].nodeName
-            , nodeVal = (tagName !== "children") ? $i.text() : $this[0]._parseXmlNodes($i.children("node"));
+          var $i = $(i),
+              tagName = $i[0].nodeName,
+              nodeVal = (tagName !== "children") ? $i.text() : $this[0]._parseXmlNodes($i.children("node"));
 
           if (!$.isArray(nodeVal)) nodeVal = $.trim(nodeVal);
           if (nodeVal.length) opts[tagName] = ($.inArray(tagName, boolChkArr) > -1) ? SetBoolean(nodeVal) : nodeVal;
@@ -176,11 +176,11 @@
         nodes.push(new Node(opts));
       });
       return nodes;
-    }
-    , getparentage: function () {
+    },
+    getparentage: function () {
       return this.parentage;
-    }
-    , node: function (el) {
+    },
+    node: function (el) {
       el = el || $(this);
 
       var node = $.extend(true, {}, (el[0] === $(this)[0]) ? $(this.$parent).data() : el.data());
@@ -261,9 +261,9 @@
 
   $.fn.tree = function (option) {
     return this.each(function () {
-      var $this = $(this)
-        , data = $this.data("tree")
-        , options = typeof option == "object" && option
+      var $this = $(this),
+          data = $this.data("tree"),
+          options = typeof option == "object" && option
 
       if (!data) $this.data("tree", (data = new Tree(this, options)))
       if (typeof option == "string") data[option]()
@@ -285,9 +285,9 @@
 
       e.preventDefault();
 
-      var $this = $(this)
-        , target = $this.next(".branch")
-        , option = $(target).data("tree") ? "toggle" : $this.data();
+      var $this = $(this),
+          target = $this.next(".branch"),
+          option = $(target).data("tree") ? "toggle" : $this.data();
 
       option.parent = $this;
       option.href = undefined;
@@ -299,15 +299,15 @@
 
     $("body").on("click.tree.data-api", "[role=leaf]", function (e) {
 
-      var $this = $(this)
-        , branch = $this.closest(".branch");
+      var $this = $(this),
+          branch = $this.closest(".branch");
 
       // If not initialized, then create it
       if (!$(branch).data("tree")) {
 
-        var $target = $(branch)
-          , branchlink = $target.prev("[data-toggle=branch]")
-          , branchdata = branchlink.data();
+        var $target = $(branch),
+            branchlink = $target.prev("[data-toggle=branch]"),
+            branchdata = branchlink.data();
 
         $target.tree($.extend({}, branchdata, {
           "toggle": false,
