@@ -24,8 +24,6 @@
 
   "use strict"; // jshint ;_;
 
-  var loading = "<img src='/bootstrap-tree/img/ajax-loader.gif' class='indicator' /> Loading ...";
-
   /* TREE CLASS DEFINITION
    * ========================= */
 
@@ -56,10 +54,6 @@
       this.$parent[currentStatus ? "addClass" : "removeClass"]("closed")
       this.$element[currentStatus ? "removeClass" : "addClass"]("in")
       
-      if (this.options.href) {
-        this._load()
-      }
-      
       n = this.node()
       // 'Action' (open|close) event
       a = $.Event(eventName, {
@@ -72,62 +66,6 @@
       
       this.$parent.trigger(a).trigger(s)
       
-    }
-
-    , _load: function () {
-        var data = $.extend({}, this.options)
-          , el = this.$element
-          , $this = $(this)
-          , options = this.options
-
-        // some config data we don't need to pass in the post
-        delete data.parent
-        delete data.href
-        delete data.callback
-
-        $.post(options.href, data, function (d, s, x){
-          
-          var doc, type = "html"
-            
-          if (options.callback) { // If a callback was defined in the data parameters
-            
-            var cb = window[options.callback].apply(el, [d, s, x]) // callbacks must return an object with 'doc' and 'type' keys
-            doc = cb.doc || d
-            type = cb.type || type
-            
-          } else {
-            
-            try {
-              doc = $.parseJSON(d)
-              type = "json"
-            } catch (err) {
-              doc = d
-            }
-            
-            if (type !== "json") {
-              try {
-                doc = $.parseXML(d)
-                type = "xml"
-              } catch (err) {
-                doc = d
-              }
-            }
-            
-          }
-          
-          switch (type) {
-            
-            case "html":
-              el.html(doc)
-              break
-              
-            default:
-              $this[0]._buildOutput(doc, type, el)
-              break
-              
-          }
-          
-        }, "html")
     }
     
     , _buildOutput: function (doc, type, parent) {
@@ -171,7 +109,7 @@
           
         }
         
-        attributes.href = (el.href) ? el.href : "#"
+        attributes.href = "#"
           
         // trade the anchor for a span tag, if it's a leaf
         // and there's no href
@@ -408,17 +346,11 @@
       
       var $this = $(this)
         , target = $this.next(".branch")
-        , href = $this.attr("href")
         , option = $(target).data("tree") ? "toggle" : $this.data()
         
-      href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
-      
-      if (!target.length) {
-        target = $('<ul>').addClass('branch').append("<li>" + loading + "</li>").insertAfter($this)
-      }
       
       option.parent = $this
-      option.href = (href !== "#") ? href : undefined
+      option.href = undefined
           
       $(target).tree(option)
       
@@ -436,14 +368,10 @@
         var $target = $(branch)
           , branchlink = $target.prev("[data-toggle=branch]")
           , branchdata = branchlink.data()
-          , href = branchlink.attr("href")
-        
-        href.replace(/.*(?=#[^\s]+$)/, '')
         
         $target.tree($.extend({}, branchdata, {
           "toggle": false,
-          "parent": branchlink,
-          "href": (href !== "#") ? href : undefined
+          "parent": branchlink
         }))
       }
       
