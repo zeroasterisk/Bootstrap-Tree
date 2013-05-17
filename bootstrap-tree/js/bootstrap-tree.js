@@ -1,6 +1,6 @@
 /* =============================================================
  * bootstrap-tree.js v0.3
- * http://twitter.github.com/cutterbl/Bootstrap-Tree
+ * http://github.com/cutterbl/Bootstrap-Tree
  *
  * Inspired by Twitter Bootstrap, with credit to bits of code
  * from all over.
